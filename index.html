@@ -4,33 +4,32 @@
     <title>Command Execution</title>
 </head>
 <body>
-    <h1>Enter Command</h1>
-    <form>
-        <input type="text" id="command" placeholder="Enter command"/>
-        <input type="button" value="Execute" onclick="executeCommand()"/>
-    </form>
+    <h1>Command Execution</h1>
+    <input type="text" id="commandInput">
+    <button onclick="executeCommand()">Execute</button>
+
     <pre id="output"></pre>
 
     <script>
         function executeCommand() {
-            var command = document.getElementById('command').value;
-            var outputElement = document.getElementById('output');
-            outputElement.textContent = 'Executing...';
+            var command = document.getElementById("commandInput").value;
+            var outputElement = document.getElementById("output");
 
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', '/execute-command'); // Replace with the appropriate server endpoint
-            xhr.setRequestHeader('Content-Type', 'application/json');
-            xhr.onload = function() {
-                if (xhr.status === 200) {
-                    outputElement.textContent = xhr.responseText;
-                } else {
-                    outputElement.textContent = 'Error occurred while executing the command';
+            outputElement.textContent = "";
+
+            if (command.trim() === "") {
+                outputElement.textContent = "Please enter a command.";
+                return;
+            }
+
+            try {
+                var output = eval(command);
+                if (output !== undefined) {
+                    outputElement.textContent = output.toString();
                 }
-            };
-            xhr.onerror = function() {
-                outputElement.textContent = 'Error occurred while executing the command';
-            };
-            xhr.send(JSON.stringify({ command: command }));
+            } catch (error) {
+                outputElement.textContent = "An error occurred: " + error.message;
+            }
         }
     </script>
 </body>
